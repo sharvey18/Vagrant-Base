@@ -1,0 +1,9 @@
+# use NFS for mounting shared folder
+$use_nfs = true
+
+# ports to forward (guest => host)
+$forwarded_ports = {
+    80 => 8080,
+    443 => 8443,
+    3306 => 3336
+}

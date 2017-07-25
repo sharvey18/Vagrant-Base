@@ -1,0 +1,46 @@
+FastCgiExternalServer /vagrant/php5-fcgi -socket /tmp/php5-fpm-vagrant.sock -pass-header Authorization -idle-timeout 300
+
+Listen 8080
+Listen 8443
+
+NameVirtualHost *:8080
+NameVirtualHost *:8443
+
+<VirtualHost *:80 *:8080>
+   DocumentRoot /vagrant/public_html/
+   ServerName vagrant.localhost
+
+   <Directory /vagrant/>
+      AllowOverride all
+   </Directory>
+
+   AddHandler php5-fcgi .php
+   Action php5-fcgi /php5-fcgi
+   Alias /php5-fcgi /vagrant/php5-fcgi
+
+   ErrorLog ${APACHE_LOG_DIR}/vagrant_error.log
+   CustomLog ${APACHE_LOG_DIR}/vagrant_access.log combined
+</VirtualHost>
+
+<VirtualHost *:443 *:8443>
+   DocumentRoot /vagrant/public_html/
+   ServerName vagrant.localhost
+
+   <Directory /vagrant/>
+      AllowOverride all
+   </Directory>
+
+   AddHandler php5-fcgi .php
+   Action php5-fcgi /php5-fcgi
+   Alias /php5-fcgi /vagrant/php5-fcgi
+
+   ErrorLog ${APACHE_LOG_DIR}/vagrant_error.log
+   CustomLog ${APACHE_LOG_DIR}/vagrant_access.log combined
+
+   SSLEngine on
+   SSLProtocol all -SSLv2
+   SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+
+   SSLCertificateFile /etc/apache2/certs/vagrant.localhost.crt
+   SSLCertificateKeyFile /etc/apache2/certs/vagrant.localhost.key
+</VirtualHost>
